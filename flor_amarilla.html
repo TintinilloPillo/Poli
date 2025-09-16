@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi Poli</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #8A2BE2, #D8BFD8 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 800px;
+        }
+        
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 2.5rem;
+        }
+        
+        .description {
+            color: #e0f7fa;
+            margin-bottom: 40px;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+        
+        .flower-container {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            margin: 0 auto;
+        }
+        
+        /* Centro del clavel */
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: #ffd54f;
+            border-radius: 50%;
+            box-shadow: 
+                0 0 20px #ffb300,
+                inset 0 0 10px rgba(255, 255, 255, 0.5);
+            z-index: 10;
+            animation: pulse 2s infinite alternate;
+        }
+        
+        /* Pétalos base */
+        .petal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: center bottom;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            transition: transform 0.3s ease;
+        }
+        
+        /* Pétalos externos (más grandes) */
+        .petal.outer {
+            width: 80px;
+            height: 110px;
+            background: linear-gradient(135deg, #ffeb3b 0%, #fbc02d 100%);
+            box-shadow: 
+                2px 2px 10px rgba(255, 215, 0, 0.4),
+                inset 5px 5px 10px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Pétalos internos (más pequeños) */
+        .petal.inner {
+            width: 60px;
+            height: 90px;
+            background: linear-gradient(135deg, #fff176 0%, #ffd54f 100%);
+            z-index: 2;
+            box-shadow: 
+                1px 1px 5px rgba(255, 215, 0, 0.3),
+                inset 3px 3px 8px rgba(255, 255, 255, 0.4);
+        }
+        
+        /* Tallo */
+        .stem {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 150px;
+            background: linear-gradient(to bottom, #388E3C, #2E7D32);
+            border-radius: 8px;
+            z-index: 1;
+        }
+        
+        /* Hojas */
+        .leaf {
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            border-radius: 50% 0 50% 50%;
+            transform-origin: left center;
+            z-index: 1;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Animación de florecimiento */
+        @keyframes bloom {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(var(--rotation));
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1) rotate(var(--rotation));
+                opacity: 1;
+            }
+        }
+        
+        /* Efecto de brillo */
+        .glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,0,0.3) 0%, rgba(255,255,0,0) 70%);
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 0.5; 
+                transform: translate(-50%, -50%) scale(1); 
+            }
+            50% { 
+                opacity: 0.8; 
+                transform: translate(-50%, -50%) scale(1.1); 
+            }
+        }
+        
+        .controls {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .controls h2 {
+            color: #e0f7fa;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #e0f7fa;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffd54f;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            color: #e0f7fa;
+            font-weight: 500;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #ffd54f 0%, #fbc02d 100%);
+            color: #2E7D32;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            color: #e0f7fa;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+        }
+        
+        .instructions h2 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            line-height: 1.6;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Para mi Poli bonita✨</h1>
+        <p class="description">Mi niña jamás será espectadora💖</p>     
+        <div class="flower-container">
+            <div class="glow"></div>
+            <div class="petals" id="petals"></div>
+            <div class="center"></div>
+            <div class="stem" id="stem"></div>
+        </div>
+        
+        <div class="controls">
+            <h2>Personaliza tu Clavel bebi</h2>
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span>Tono Amarillo:</span>
+                    <span id="yellow-value">Medio</span>
+                </div>
+                <input type="range" min="1" max="3" value="2" class="slider" id="yellow-shade">
+                
+                <div class="slider-label">
+                    <span>Tamaño:</span>
+                    <span id="size-value">Normal</span>
+                </div>
+                <input type="range" min="1" max="3" value="2" class="slider" id="flower-size">
+                
+                <div class="slider-label">
+                    <span>Animación:</span>
+                    <span id="animation-value">Suave</span>
+                </div>
+                <input type="range" min="1" max="3" value="2" class="slider" id="animation-speed">
+            </div>
+            
+            <div>
+                <button class="btn" id="bloom-btn">Abrir/Cerrar Flor</button>
+                <button class="btn" id="reset-btn">Reiniciar</button>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <p>
+                Él la estaba esperando con una flor amarilla Ella lo estaba soñando con la luz en su pupila Y el amarillo del sol iluminaba la esquina (la esquina) Lo sentía tan cercano, lo sentía desde niña Ella sabía que él sabía, que algún día pasaría
+ ue vendría a buscarla, con sus flores amarillas
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Crear pétalos dinámicamente
+        const petalsContainer = document.getElementById('petals');
+        const stemContainer = document.getElementById('stem');
+        const totalPetals = 16;
+        let isBloomed = true;
+        
+        function createFlower() {
+            petalsContainer.innerHTML = '';
+            
+            for (let i = 0; i < totalPetals; i++) {
+                const petal = document.createElement('div');
+                const rotation = (360 / totalPetals) * i;
+                
+                petal.className = 'petal';
+                petal.style.setProperty('--rotation', `${rotation}deg`);
+                petal.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+                
+                // Alternar entre pétalos externos e internos
+                if (i % 2 === 0) {
+                    petal.classList.add('outer');
+                } else {
+                    petal.classList.add('inner');
+                }
+                
+                // Animación escalonada
+                petal.style.animation = `bloom 1s ease-out ${i * 0.1}s both`;
+                
+                petalsContainer.appendChild(petal);
+            }
+
+            // Añadir hojas
+            for (let i = 0; i < 2; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                leaf.style.top = `${30 + i * 40}px`;
+                leaf.style.left = `${i === 0 ? '30%' : '70%'}`;
+                leaf.style.transform = `rotate(${i === 0 ? '-30deg' : '210deg'})`;
+                stemContainer.appendChild(leaf);
+            }
+        }
+        
+        // Inicializar la flor
+        createFlower();
+        
+        // Controles interactivos
+        document.getElementById('bloom-btn').addEventListener('click', function() {
+            const petals = document.querySelectorAll('.petal');
+            isBloomed = !isBloomed;
+            
+            petals.forEach((petal, index) => {
+                if (isBloomed) {
+                    petal.style.animation = `bloom 1s ease-out ${index * 0.1}s both`;
+                } else {
+                    petal.style.animation = `bloom 1s ease-in ${index * 0.1}s reverse both`;
+                }
+            });
+        });
+        
+        document.getElementById('reset-btn').addEventListener('click', function() {
+            createFlower();
+            isBloomed = true;
+            
+            // Reset sliders
+            document.getElementById('yellow-shade').value = 2;
+            document.getElementById('flower-size').value = 2;
+            document.getElementById('animation-speed').value = 2;
+            
+            // Reset labels
+            document.getElementById('yellow-value').textContent = 'Medio';
+            document.getElementById('size-value').textContent = 'Normal';
+            document.getElementById('animation-value').textContent = 'Suave';
+            
+            // Reset styles
+            document.documentElement.style.setProperty('--yellow-light', '#ffeb3b');
+            document.documentElement.style.setProperty('--yellow-dark', '#fbc02d');
+            document.documentElement.style.setProperty('--yellow-center', '#ffd54f');
+            document.documentElement.style.setProperty('--flower-scale', '1');
+            document.documentElement.style.setProperty('--animation-speed', '1s');
+        });
+        
+        // Control deslizante para el tono de amarillo
+        document.getElementById('yellow-shade').addEventListener('input', function() {
+            const value = this.value;
+            let light, dark, center, label;
+            
+            if (value == 1) {
+                light = '#fff9c4';
+                dark = '#ffd54f';
+                center = '#ffc107';
+                label = 'Claro';
+            } else if (value == 2) {
+                light = '#ffeb3b';
+                dark = '#fbc02d';
+                center = '#ffd54f';
+                label = 'Medio';
+            } else {
+                light = '#fdd835';
+                dark = '#f9a825';
+                center = '#ffb300';
+                label = 'Oscuro';
+            }
+            
+            document.documentElement.style.setProperty('--yellow-light', light);
+            document.documentElement.style.setProperty('--yellow-dark', dark);
+            document.documentElement.style.setProperty('--yellow-center', center);
+            
+            document.getElementById('yellow-value').textContent = label;
+            
+            // Actualizar colores
+            document.querySelectorAll('.petal.outer').forEach(petal => {
+                petal.style.background = `linear-gradient(135deg, ${light} 0%, ${dark} 100%)`;
+            });
+            
+            document.querySelector('.center').style.background = center;
+        });
+        
+        // Control deslizante para el tamaño
+        document.getElementById('flower-size').addEventListener('input', function() {
+            const value = this.value;
+            let scale, label;
+            
+            if (value == 1) {
+                scale = '0.8';
+                label = 'Pequeño';
+            } else if (value == 2) {
+                scale = '1';
+                label = 'Normal';
+            } else {
+                scale = '1.2';
+                label = 'Grande';
+            }
+            
+            document.documentElement.style.setProperty('--flower-scale', scale);
+            document.querySelector('.flower-container').style.transform = `scale(${scale})`;
+            
+            document.getElementById('size-value').textContent = label;
+        });
+        
+        // Control deslizante para la velocidad de animación
+        document.getElementById('animation-speed').addEventListener('input', function() {
+            const value = this.value;
+            let speed, label;
+            
+            if (value == 1) {
+                speed = '2s';
+                label = 'Lenta';
+            } else if (value == 2) {
+                speed = '1s';
+                label = 'Suave';
+            } else {
+                speed = '0.5s';
+                label = 'Rápida';
+            }
+            
+            document.documentElement.style.setProperty('--animation-speed', speed);
+            
+            // Actualizar animaciones
+            document.querySelectorAll('.petal').forEach((petal, index) => {
+                if (isBloomed) {
+                    petal.style.animation = `bloom ${speed} ease-out ${index * 0.1}s both`;
+                }
+            });
+            
+            document.getElementById('animation-value').textContent = label;
+        });
+    </script>
+</body>
+</html>
